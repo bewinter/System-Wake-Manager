@@ -7,17 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Win32;
 
 
 namespace systemWakeManager
@@ -55,7 +45,7 @@ namespace systemWakeManager
 				
 			//string command = "powercfg -devicequery wake_from_any";
 			         
-			System.Diagnostics.ProcessStartInfo procStartInfo =
+			var procStartInfo =
 				new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
 			
 			// The following commands are needed to redirect the standard output.
@@ -65,13 +55,13 @@ namespace systemWakeManager
 			// Do not create the black window.
 			procStartInfo.CreateNoWindow = true;
 			// Now we create a process, assign its ProcessStartInfo and start it
-			System.Diagnostics.Process proc = new System.Diagnostics.Process();
+			var proc = new System.Diagnostics.Process();
 			proc.StartInfo = procStartInfo;			
 			proc.StartInfo.Verb = "runas";
 			
 			proc.Start();
 			// Get the output into a string
-			string result = proc.StandardOutput.ReadToEnd();
+			var result = proc.StandardOutput.ReadToEnd();
 			    
 			return(result);
 			
@@ -110,7 +100,7 @@ namespace systemWakeManager
 			 	}
 			 }*/
 			 
-			string result = runCommand(command);
+			var result = runCommand(command);
 			 	
 			try {
 				
@@ -147,7 +137,7 @@ namespace systemWakeManager
 		}
 		void DisableButtonClick(object sender, EventArgs e)
 		{
-			if (itemToAlter != "" && itemToAlter != null) {
+			if (!string.IsNullOrEmpty(itemToAlter)) {
 				DialogResult dialogResult = MessageBox.Show("Are you sure you want to disable this item? \n\n" + itemToAlter, itemToAlter, MessageBoxButtons.YesNo);
 				if (dialogResult == DialogResult.Yes) {
 					
@@ -158,7 +148,7 @@ namespace systemWakeManager
 					MessageBox.Show("Done");
 					
 					label1.Text = "Armed Wake Devices";
-					getWakeDevices("powercfg -devicequery wake_armed", false);
+                    getWakeDevices("powercfg -devicequery wake_armed | sort", false);
 					
 				} else if (dialogResult == DialogResult.No) {
 					//do something else
@@ -167,7 +157,7 @@ namespace systemWakeManager
 		}
 		void BtnEnableWakeDeviceClick(object sender, EventArgs e)
 		{
-			if (itemToAlter != "" && itemToAlter != null) {
+			if (!string.IsNullOrEmpty(itemToAlter)) {
 				DialogResult dialogResult = MessageBox.Show("Are you sure you want to enable this item? \n\n" + itemToAlter, itemToAlter, MessageBoxButtons.YesNo);
 				if (dialogResult == DialogResult.Yes) {
 					
@@ -177,7 +167,7 @@ namespace systemWakeManager
 					MessageBox.Show("Done");
 					
 					label1.Text = "Armed Wake Devices";
-					getWakeDevices("powercfg -devicequery wake_armed", false);
+                    getWakeDevices("powercfg -devicequery wake_armed | sort", false);
 					
 				} else if (dialogResult == DialogResult.No) {
 					//do something else
@@ -188,17 +178,17 @@ namespace systemWakeManager
 		void BtnAllWakeDevicesClick(object sender, EventArgs e)
 		{
 			label1.Text = "All Wake Devices";
-			getWakeDevices("powercfg -devicequery wake_from_any", false);
+			getWakeDevices("powercfg -devicequery wake_from_any | sort", false);
 		}
 		void BtnArmedWakeDevicesClick(object sender, EventArgs e)
 		{
 			label1.Text = "Armed Wake Devices";
-			getWakeDevices("powercfg -devicequery wake_armed", false);
+            getWakeDevices("powercfg -devicequery wake_armed | sort", false);
 		}
 		void BtnLastUsedWakeDeviceClick(object sender, EventArgs e)
 		{
 			label1.Text = "Last Used Wake Devices";
-			getWakeDevices("powercfg -lastwake", true);
+            getWakeDevices("powercfg -lastwake | sort", true);
 		}
 
 	}
